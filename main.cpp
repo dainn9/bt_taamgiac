@@ -24,7 +24,7 @@ class Diem{
         double kCach(const Diem& B);
         friend double fkCach(const Diem& A, const Diem& B);
         // trung diem
-        friend Diem ftrungDiem(const Diem& A, const Diem& B);
+        friend Diem fTDiem(const Diem& A, const Diem& B);
         Diem Tdiem(const Diem& A);
         // diem doi xung goc toa do O, Ox, Oy
         Diem doiXung_O();
@@ -64,14 +64,14 @@ Diem operator-(const Diem& A, const Diem& B){
 }
 
 double Diem::kCach(const Diem& B){
-    return sqrt(pow(x-B.x, 2) + pow(y-B.y, 2));
+    return sqrt(pow(x-B.getX(), 2) + pow(y-B.getY(), 2));
 }
 
 double fkCach(const Diem& A, const Diem& B){
     return sqrt(pow(A.x - B.x, 2) + pow(A.y - B.y,2));
 }
 
-Diem ftrungDiem(const Diem& A, const Diem& B){
+Diem fTDiem(const Diem& A, const Diem& B){
     Diem C;
     C.setX((A.x + B.x) / 2);
     C.setY((A.y + B.y) / 2);
@@ -99,17 +99,16 @@ Diem Diem::doiXung_Oy(){
     return C;
 }
 
-Diem fDoixung_O(const Diem& A){
+Diem fdoixung_O(const Diem& A){
     Diem C(0-A.getX(), 0-A.getY());
     return C;
 }
-
-Diem fdoiXung_Ox(const Diem& A){
+Diem fdoixung_Ox(const Diem& A){
     Diem C(A.getX(), 0-A.getY());
     return C;
 }
 
-Diem fdoiXung_Oy(const Diem& A){
+Diem fdoixung_Oy(const Diem& A){
     Diem C(0-A.getX(), A.getY());
     return C;
 }
@@ -118,7 +117,7 @@ bool Diem::KTtrungnhau(const Diem& A){
     return (x == A.x && y == A.y);
 }
 
-class TamGiac{
+class TamGiac : public Diem{
     Diem A, B, C;
     public:
         TamGiac(){;}
@@ -168,10 +167,8 @@ class DanhSachTG{
 
 int main(){
     
-    Diem a;
-    a.nhap();
+    Diem a(4,2), b, c(4, 2);
     a.Vitri();
-
     system("pause");
     return 0;
 }
