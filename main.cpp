@@ -3,172 +3,233 @@
 using namespace std;
 
 int checkVT(int x, int y);
-void xuat_Vt(int ck);
+void Output_Vt(int ck);
+void Output_TG(int ck);
 
-
-class Diem{
+class Point{
     float x = 0, y = 0;
     public:
-        Diem(){;}
-        Diem(int a, int b):x(a), y(b){}
+        Point(){;}
+        Point(int a, int b):x(a), y(b){}
         void setX(int a){x = a;}
         void setY(int b){y = b;}
         float getX() const {return x;}
         float getY()const {return y;}
 
-        void nhap();
-        void xuat();
+        void Input();
+        void Output();
 
-        friend Diem operator-(const Diem& A, const Diem& B);
+        friend Point operator-(const Point& A, const Point& B);
         // tinh khoang cach
-        double kCach(const Diem& B);
-        friend double fkCach(const Diem& A, const Diem& B);
-        // trung diem
-        friend Diem fTDiem(const Diem& A, const Diem& B);
-        Diem Tdiem(const Diem& A);
-        // diem doi xung goc toa do O, Ox, Oy
-        Diem doiXung_O();
-        Diem doiXung_Ox();
-        Diem doiXung_Oy();
+        double distance(const Point& B) const;
+        friend double fdistance(const Point& A, const Point& B);
+        // trung Point
+        friend Point fmidPoint(const Point& A, const Point& B);
+        Point midPoint(const Point& A) const;
+        // Point doi xung qua goc toa do O, Ox, Oy
+        Point symmetric_O() const;
+        Point symmetric_Ox() const;
+        Point symmetric_Oy() const;
 
-        friend Diem fdoixung_O(const Diem& A);
-        friend Diem fdoixung_Ox(const Diem& A);
-        friend Diem fdoixung_Oy(const Diem& A);
+        friend Point fsymmetric_O(const Point& A);
+        friend Point fsymmetric_Ox(const Point& A);
+        friend Point fsymmetric_Oy(const Point& A);
 
         // Kiem tra trung nhau
-        bool KTtrungnhau(const Diem& A);
-        // Kiem tra diem thuoc phan tu nao
-        void Vitri();
-
-
-
+        bool check_overlap(const Point& A) const;
+        // Kiem tra Point thuoc phan tu nao
+        void Location();
 };
 
-void Diem::nhap(){
+int checkTG(const Point &A,const Point &B,const Point &C);
+
+void Point::Input(){
+    cout << "\nNhap toa do diem:\n";
     cin >> x >> y;
 }
 
-void Diem::xuat(){
-    cout << "("<<x<<","<<y<<")";
+void Point::Output(){
+    cout << "("<<x<<","<<y<<")\n";
 }
 
 
-void Diem::Vitri(){
-    cout << "Diem ";
-    this->xuat();
-    xuat_Vt(checkVT(x, y));
+void Point::Location(){
+    cout << "Point ";
+    this->Output();
+    Output_Vt(checkVT(x, y));
 }
 
-Diem operator-(const Diem& A, const Diem& B){
-    return Diem(A.x - B.x, A.y - B.y);
+Point operator-(const Point& A, const Point& B){
+    return Point(A.x - B.x, A.y - B.y);
 }
 
-double Diem::kCach(const Diem& B){
+double Point::distance(const Point& B) const {
     return sqrt(pow(x-B.getX(), 2) + pow(y-B.getY(), 2));
 }
 
-double fkCach(const Diem& A, const Diem& B){
+double fdistance(const Point& A, const Point& B){
     return sqrt(pow(A.x - B.x, 2) + pow(A.y - B.y,2));
 }
 
-Diem fTDiem(const Diem& A, const Diem& B){
-    Diem C;
+Point fmidPoint(const Point& A, const Point& B){
+    Point C;
     C.setX((A.x + B.x) / 2);
     C.setY((A.y + B.y) / 2);
     return C;
 }
 
-Diem Diem::Tdiem(const Diem& A){
-    Diem C;
+Point Point::midPoint(const Point& A) const{
+    Point C;
     C.setX((x + A.x) / 2);
     C.setY((y + A.y) / 2);
     return C;
 }
-Diem Diem::doiXung_O(){
-    Diem C(0-x, 0-y);
+Point Point::symmetric_O() const{
+    Point C(0-x, 0-y);
     return C;
 }
 
-Diem Diem::doiXung_Ox(){
-    Diem C(x, 0-y);
+Point Point::symmetric_Ox() const{
+    Point C(x, 0-y);
     return C;
 }
 
-Diem Diem::doiXung_Oy(){
-    Diem C(0-x, y);
+Point Point::symmetric_Oy() const{
+    Point C(0-x, y);
     return C;
 }
 
-Diem fdoixung_O(const Diem& A){
-    Diem C(0-A.getX(), 0-A.getY());
+Point fsymmetric_O(const Point& A){
+    Point C(0-A.getX(), 0-A.getY());
     return C;
 }
-Diem fdoixung_Ox(const Diem& A){
-    Diem C(A.getX(), 0-A.getY());
-    return C;
-}
-
-Diem fdoixung_Oy(const Diem& A){
-    Diem C(0-A.getX(), A.getY());
+Point fsymmetric_Ox(const Point& A){
+    Point C(A.getX(), 0-A.getY());
     return C;
 }
 
-bool Diem::KTtrungnhau(const Diem& A){
+Point fsymmetric_Oy(const Point& A){
+    Point C(0-A.getX(), A.getY());
+    return C;
+}
+
+bool Point::check_overlap(const Point& A) const{
     return (x == A.x && y == A.y);
 }
 
-class TamGiac : public Diem{
-    Diem A, B, C;
+class Triangle : public Point{
+    Point A, B, C;
     public:
-        TamGiac(){;}
-        TamGiac (Diem a, Diem b, Diem c) : A(a), B(b), C(c){}
+        Triangle(){;}
+        Triangle (Point a, Point b, Point c) : A(a), B(b), C(c){}
 
-        double chuVi() {
-            return A.kCach(B) + B.kCach(C) + C.kCach(A);
-        }
+        bool isTriangle() const;
+        void distance_R() const;
+        double perimeter() const;
+        friend double fperimeter(const Point &a,const Point &b,const Point &c);
         // dien tich theo toa do 3 dinh
-        double dienTich(){
-            return abs((B.getX() - A.getX())*(C.getY() - A.getY())-(C.getX() - A.getX())*(B.getY() - A.getY()));
-        }
-        // kiem tra co phai tam giac khong
-        bool checkTG(){
-             double a = A.kCach(B);
-            double b = B.kCach(C);
-            double c = C.kCach(A);
-
-            if (a + b > c && a + c > b && c + b > a && a > 0 && b > 0 && c > 0)
-                return true;
-            return false;
-        }
+        double area() const;
+        friend double farea(const Point &a,const Point &b,const Point &c);
+        // nhap diem la thuoc tinh ke thua cua Point
+        void Input_P();
+        void Output_P();
+        // nhap 3 diem thuoc tinh cua Triangle
+        void Input_T();
+        void Output_T();
+        void checkT();
 
 };
 
+bool Triangle::isTriangle() const{
+    double a = A.distance(B);
+    double b = B.distance(C);
+    double c = C.distance(A);
 
-class DanhSachTG{
-    int n;
-    Diem *p;
-    public:
-        DanhSachTG(){
-            n = 0;
-            p = nullptr;
-        }
-        DanhSachTG(int sl){
-            n = sl;
-            p = new Diem[n];
-        }
-        ~DanhSachTG(){
-            n = 0;
-            delete[] p;
-        }
-        double dienTich();
-        void Nhap();
+    if (a + b > c && a + c > b && c + b > a && a > 0 && b > 0 && c > 0)
+        return true;
+    return false;
+}
 
-};
+void Triangle::distance_R() const{
+    if (isTriangle() == false){
+        cout << "Khong phai tam giac\n";
+        return;
+    } else {
+        double a = A.distance(B);
+        double b = B.distance(C);
+        double c = C.distance(A);
+        cout << "Do dai 3 canh tam giac:\n";
+        cout << a << " " << b << " " << c << endl;
+    }
+}
+
+
+double Triangle::perimeter() const{
+    if (isTriangle() == false){
+        cout << "Khong phai tam giac\n";
+        return 0;
+    } else 
+        return A.distance(B) + B.distance(C) + C.distance(A);
+}
+
+double fperimeter(const Point &a,const Point &b,const Point &c){
+    Triangle t(a,b,c);
+    return t.perimeter();
+}
+
+double Triangle::area() const{
+    if (isTriangle() == false){
+        cout << "Khong phai tam giac\n";
+        return 0;
+    } else 
+        return (1.0/2)*abs((B.getX() - A.getX())*(C.getY() - A.getY())-(C.getX() - A.getX())*(B.getY() - A.getY()));
+}
+
+double farea(const Point &a,const Point &b,const Point &c){
+   Triangle t(a,b,c);
+   return t.area();
+}
+
+void Triangle::Input_P(){
+    Point::Input();
+}
+void Triangle::Output_P(){
+    Point::Output();
+}
+
+void Triangle::Output_T(){
+    cout << "Toa do 3 diem tam giac vua nhap:\n";
+    A.Output(); B.Output(); C.Output();
+}
+
+void Triangle::Input_T(){
+    cout << "\nNhap toa do 3 diem cua tam giac:\n";
+    A.Input(); B.Input(); C.Input();
+}
+
+void Triangle::checkT(){
+    if (isTriangle() == false){
+        cout << "Khong phai tam giac\n";
+        return;
+    } else 
+        Output_TG(checkTG(A, B, C));
+    
+}
 
 int main(){
-    
-    Diem a(4,2), b, c(4, 2);
-    a.Vitri();
+    Point a(2,3), b(4,3), c(3,5);
+//    int i = checkTG(a, b, c);
+//    Output_TG(i);
+    // int n; cin >> n;
+    // Triangle *t = new Triangle[n];
+    // for (int i = 0; i < n; i++){
+    //     t[i].Input_P();
+    //     t[i].Output_P();
+    // }
+
+    // Triangle t;
+    // t.Input_T();
+    // t.Output_T();
     system("pause");
     return 0;
 }
@@ -188,8 +249,8 @@ int checkVT(int x, int y){
         return 6;
     else return 0;
 }
-// xuat vi tri goc phan tu
-void xuat_Vt(int ck){
+// Output vi tri goc phan tu
+void Output_Vt(int ck){
     switch (ck)
     {
     case 1:
@@ -212,6 +273,38 @@ void xuat_Vt(int ck){
         break;   
     default:
         cout <<" la goc toa do";
+        break;
+    }
+}
+
+int checkTG(const Point &A,const Point &B,const Point &C){
+    double a = A.distance(B);
+    double b = A.distance(C);
+    double c = B.distance(C);
+    if (a == b && a == c && b == c)
+        return 3;
+    else if ((a == b && a != c) || (b == c && b != a) || (a == c && a != b))
+        return 2;
+    else if ((pow(a,2) == pow(b,2)+pow(c,2)) || (pow(c,2) == pow(b,2)+pow(a,2)) || (pow(b,2) == pow(a,2)+pow(c,2)))
+        return 4;
+    else
+        return 1;
+}
+
+void Output_TG(int ck){
+    switch (ck)
+    {
+    case 1:
+        cout <<"Tam giac thuong\n";
+        break;
+    case 2:
+        cout <<"Tam giac can\n";
+        break;
+    case 3:
+        cout <<"Tam giac deu\n";
+        break;
+    case 4:
+        cout <<"Tam giac vuong\n";
         break;
     }
 }
